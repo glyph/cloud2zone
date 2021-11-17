@@ -35,7 +35,7 @@ def libcloud_zone_to_bind_zone_file(zone) -> str:
             "",
         ]
         + [
-            "\t".join(
+            " ".join(
                 [
                     record.name or "@",
                     str(
@@ -50,30 +50,36 @@ def libcloud_zone_to_bind_zone_file(zone) -> str:
                         if record.type in [RecordType.MX, RecordType.SRV]
                         else ()
                     ),
-                    it
+                    '"' + it.replace('"', '\\"') + '"'
                     if (
-                        " "
-                        in (
-                            it := record.data
-                            + (
-                                "."
-                                if record.type
-                                in [
-                                    RecordType.CNAME,
-                                    RecordType.DNAME,
-                                    RecordType.MX,
-                                    RecordType.PTR,
-                                    RecordType.SRV,
-                                ]
-                                and not record.data.endswith(".")
-                                else ""
+                        (
+                            " "
+                            in (
+                                it := (
+                                    record.data
+                                    + (
+                                        "."
+                                        if record.type
+                                        in [
+                                            RecordType.CNAME,
+                                            RecordType.DNAME,
+                                            RecordType.MX,
+                                            RecordType.PTR,
+                                            RecordType.SRV,
+                                        ]
+                                        and not record.data.endswith(".")
+                                        else ""
+                                    )
+                                )
                             )
                         )
                         and record.type in [RecordType.TXT, RecordType.SPF]
                     )
-                    else '"' + it.replace('"', '\\"') + '"',
+                    else it
                 ]
             )
             for record in sorted(zone.list_records(), key=get_record_id)
+            # filter out apex NS records
+            if not ((not record.name) and (record.type == RecordType.NS))
         ]
     )
