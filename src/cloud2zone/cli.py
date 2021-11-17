@@ -21,6 +21,7 @@ from getpass import getpass
 from libcloud.dns.providers import get_driver as get_dns_driver
 from libcloud.dns.base import DNSDriver
 from libcloud.common.types import InvalidCredsError
+from libcloud.common.base import ConnectionUserAndKey
 
 from keyring import get_password, set_password
 from cloud2zone import libcloud_zone_to_bind_zone_file
@@ -31,30 +32,38 @@ def get_authenticated_driver(driver_name: str, account_name: str) -> DNSDriver:
     cls = get_dns_driver(driver_name)
     pw = get_password(secret_site, account_name)
     askuser = lambda prefix="": getpass(
-        "{prefix}API key for {driver_name}/{account_name}:"
-        .format(prefix=prefix, driver_name=driver_name,
-                account_name=account_name)
+        "{prefix}API key for {driver_name}/{account_name}:".format(
+            prefix=prefix, driver_name=driver_name, account_name=account_name
+        )
     )
 
     if not pw:
         pw = askuser()
 
+    secret_is_key = not issubclass(cls.connectionCls, ConnectionUserAndKey)
+    args = [pw] if secret_is_key else [account_name, pw]
+
     while True:
         try:
-            dns = cls(account_name, pw)
+            dns = cls(*args)
         except InvalidCredsError:
             pw = askuser("API key invalid; ")
         else:
             set_password(secret_site, account_name, pw)
             return dns
 
+
 @click.command()
-@click.option('--driver', help='name of libcloud driver')
-@click.option('--account', help='username of provider account')
-@click.option('--domain', help='domain name to export')
-def script(driver: str, account: str, domain: str) -> None:
-    dns = get_authenticated_driver(driver, account)
-    zones = dns.list_zones()
-    zone = next(z for z in zones if z.domain == domain)
-    result = libcloud_zone_to_bind_zone_file(zone=zone)
-    sys.stdout.write(result)
+@click.option("--provider", help="name of libcloud provider")
+@click.option("--account", help="username of provider account")
+@click.option("--domain", help="domain name to export")
+def script(provider: str, account: str, domain: str) -> None:
+    sys.stdout.write(
+        libcloud_zone_to_bind_zone_file(
+            next(
+                z
+                for z in get_authenticated_driver(provider, account).list_zones()
+                if z.domain == domain
+            )
+        )
+    )
