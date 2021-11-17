@@ -2,7 +2,7 @@ Libcloud DNS Zone to BIND zone
 ==============================
 
 `cloud2zone` is a python module and CLI tool which allow you to export DNS
- zones from any `Libcloud`_-supported provider to the BIND zone file format.
+zones from any `Libcloud`_-supported provider to the BIND zone file format.
 
 Note: The generated BIND zone file doesn't contain ``SOA`` and ``NS``
 records. This should work fine if you just want to import this file using a DNS
