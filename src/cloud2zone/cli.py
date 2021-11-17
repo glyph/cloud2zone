@@ -13,7 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sys import argv
+import click
+import sys
+
 from getpass import getpass
 
 from libcloud.dns.providers import get_driver as get_dns_driver
@@ -46,12 +48,13 @@ def get_authenticated_driver(driver_name: str, account_name: str) -> DNSDriver:
             set_password(secret_site, account_name, pw)
             return dns
 
-
-driver_name, account_name, domain_name = argv[1:3]  # todo: use click
-driver = get_authenticated_driver(driver_name, account_name)
-
-zones = driver.list_zones()
-zone = next(z for z in zones if z.domain == domain_name)
-
-result = libcloud_zone_to_bind_zone_file(zone=zone)
-print(result)
+@click.command()
+@click.option('--driver', help='name of libcloud driver')
+@click.option('--account', help='username of provider account')
+@click.option('--domain', help='domain name to export')
+def script(driver: str, account: str, domain: str) -> None:
+    dns = get_authenticated_driver(driver, account)
+    zones = dns.list_zones()
+    zone = next(z for z in zones if z.domain == domain)
+    result = libcloud_zone_to_bind_zone_file(zone=zone)
+    sys.stdout.write(result)
