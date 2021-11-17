@@ -18,7 +18,7 @@ import datetime
 from libcloud import __version__ as libcloud_version
 from libcloud.dns.types import RecordType
 
-from libcloud_to_bind.utils import get_record_id
+from .utils import get_record_id
 
 __version__ = "0.1.0"
 __all__ = ["__version__", "libcloud_zone_to_bind_zone_file"]

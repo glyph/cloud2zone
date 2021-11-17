@@ -13,19 +13,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from libcloud.dns.types import Provider
-from libcloud.dns.providers import get_driver
+from sys import argv
+from getpass import getpass
 
-from libcloud_to_bind import libcloud_zone_to_bind_zone_file
+from libcloud.dns.providers import get_driver as get_dns_driver
+from libcloud.dns.base import DNSDriver
+from libcloud.common.types import InvalidCredsError
+
+from keyring import get_password, set_password
+from cloud2zone import libcloud_zone_to_bind_zone_file
 
 
-DOMAIN_TO_EXPORT = 'example.com'
+def get_authenticated_driver(driver_name: str, account_name: str) -> DNSDriver:
+    secret_site = "libcloud/" + driver_name
+    cls = get_dns_driver(driver_name)
+    pw = get_password(secret_site, account_name)
+    askuser = lambda prefix="": getpass(
+        "{prefix}API key for {driver_name}/{account_name}:"
+        .format(prefix=prefix, driver_name=driver_name,
+                account_name=account_name)
+    )
 
-Zerigo = get_driver(Provider.ZERIGO)
-driver = Zerigo('email', 'api key')
+    if not pw:
+        pw = askuser()
+
+    while True:
+        try:
+            dns = cls(account_name, pw)
+        except InvalidCredsError:
+            pw = askuser("API key invalid; ")
+        else:
+            set_password(secret_site, account_name, pw)
+            return dns
+
+
+driver_name, account_name, domain_name = argv[1:3]  # todo: use click
+driver = get_authenticated_driver(driver_name, account_name)
 
 zones = driver.list_zones()
-zone = [z for z in zones if z.domain == DOMAIN_TO_EXPORT][0]
+zone = next(z for z in zones if z.domain == domain_name)
 
 result = libcloud_zone_to_bind_zone_file(zone=zone)
 print(result)

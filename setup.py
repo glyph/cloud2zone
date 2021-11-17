@@ -17,20 +17,19 @@ from setuptools import setup
 
 
 setup(
-    name='libcloud_to_bind',
+    name='cloud2zone',
     version='0.1.1',
     long_description=open('README.rst').read(),
-    packages=[
-        'libcloud_to_bind'
-    ],
+    packages=find_packages('src'),
     package_dir={
-        'libcloud_to_bind': 'libcloud_to_bind'
+        '': 'src'
     },
     install_requires=[
         'apache-libcloud>=0.13.1',
         'keyring',
+        'click',
     ],
-    url='https://github.com/Kami/python-libcloud-to-bind/',
+    url='https://github.com/glyph/cloud2zone/',
     license='Apache License (2.0)',
     author='Tomaz Muraus',
     author_email='tomaz+pypi@tomaz.me',

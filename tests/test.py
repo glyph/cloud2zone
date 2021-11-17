@@ -20,7 +20,7 @@ from libcloud.dns.base import Zone, Record
 from libcloud.dns.types import RecordType
 from mock import Mock
 
-from libcloud_to_bind import libcloud_zone_to_bind_zone_file
+from cloud2zone import libcloud_zone_to_bind_zone_file
 
 MOCK_RECORDS_VALUES = [
     {'id': 1, 'name': 'www', 'type': RecordType.A, 'data': '127.0.0.1'},
