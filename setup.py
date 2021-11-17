@@ -18,7 +18,7 @@ from setuptools import setup
 
 setup(
     name='libcloud_to_bind',
-    version='0.1.0',
+    version='0.1.1',
     long_description=open('README.rst').read(),
     packages=[
         'libcloud_to_bind'
@@ -28,11 +28,14 @@ setup(
     },
     install_requires=[
         'apache-libcloud>=0.13.1',
+        'keyring',
     ],
     url='https://github.com/Kami/python-libcloud-to-bind/',
     license='Apache License (2.0)',
     author='Tomaz Muraus',
     author_email='tomaz+pypi@tomaz.me',
+    maintainer='Glyph Lefkowitz',
+    maintainer_email='glyph@glyph.im',
     description='Python module which allows you to export Libcloud DNS ' +
                 'zone to the BIND zone file format',
     test_suite='tests',
@@ -44,9 +47,7 @@ setup(
         'Operating System :: OS Independent',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: Implementation :: PyPy',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ]
 )

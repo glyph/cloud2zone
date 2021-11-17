@@ -40,7 +40,7 @@ def get_record_line(record):
 
     ttl = record.extra['ttl'] if 'ttl' in record.extra else record.zone.ttl
     ttl = str(ttl)
-    record_type = RecordType.__repr__(record.type)
+    record_type = record.type
     data = record.data
 
     if record.type in [RecordType.CNAME, RecordType.DNAME, RecordType.MX,
