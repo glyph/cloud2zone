@@ -18,7 +18,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="cloud2zone",
-    version="0.1.1",
+    version="0.1.2",
     long_description=open("README.rst").read(),
     packages=find_packages("src"),
     package_dir={"": "src"},
