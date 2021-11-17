@@ -14,11 +14,7 @@
 # limitations under the License.
 
 import sys
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 from libcloud.dns.base import Zone, Record
 from libcloud.dns.types import RecordType
@@ -79,17 +75,17 @@ class LibcloudZoneToBINDZoneTestCase(unittest.TestCase):
         output = libcloud_zone_to_bind_zone_file(zone=zone)
         lines = output.split('\n')
 
-        self.assertRegexpMatches(lines[1], r'\$ORIGIN example\.com\.')
-        self.assertRegexpMatches(lines[2], r'\$TTL 900')
+        self.assertRegex(lines[1], r'\$ORIGIN example\.com\.')
+        self.assertRegex(lines[2], r'\$TTL 900')
 
-        self.assertRegexpMatches(lines[4], r'www.example.com\.\s+900\s+IN\s+A\s+127\.0\.0\.1')
-        self.assertRegexpMatches(lines[5], r'www.example.com\.\s+900\s+IN\s+AAAA\s+2a01:4f8:121:3121::2')
-        self.assertRegexpMatches(lines[6], r'www.example.com\.\s+123\s+IN\s+A\s+127\.0\.0\.1')
-        self.assertRegexpMatches(lines[7], r'example.com\.\s+900\s+IN\s+A\s+127\.0\.0\.1')
-        self.assertRegexpMatches(lines[8], r'test1.example.com\.\s+900\s+IN\s+TXT\s+"test foo bar"')
-        self.assertRegexpMatches(lines[9], r'test2.example.com\.\s+900\s+IN\s+TXT\s+"test \\"foo\\" \\"bar\\""')
-        self.assertRegexpMatches(lines[10], r'example.com\.\s+900\s+IN\s+MX\s+10\s+mx.example.com')
-        self.assertRegexpMatches(lines[11], r'example.com\.\s+900\s+IN\s+SRV\s+20\s+10 3333 example.com')
+        self.assertRegex(lines[4], r'www.example.com\.\s+900\s+IN\s+A\s+127\.0\.0\.1')
+        self.assertRegex(lines[5], r'www.example.com\.\s+900\s+IN\s+AAAA\s+2a01:4f8:121:3121::2')
+        self.assertRegex(lines[6], r'www.example.com\.\s+123\s+IN\s+A\s+127\.0\.0\.1')
+        self.assertRegex(lines[7], r'example.com\.\s+900\s+IN\s+A\s+127\.0\.0\.1')
+        self.assertRegex(lines[8], r'test1.example.com\.\s+900\s+IN\s+TXT\s+"test foo bar"')
+        self.assertRegex(lines[9], r'test2.example.com\.\s+900\s+IN\s+TXT\s+"test \\"foo\\" \\"bar\\""')
+        self.assertRegex(lines[10], r'example.com\.\s+900\s+IN\s+MX\s+10\s+mx.example.com')
+        self.assertRegex(lines[11], r'example.com\.\s+900\s+IN\s+SRV\s+20\s+10 3333 example.com')
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
